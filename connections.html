@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drift - Connections</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+    
+    .phone {
+      max-width: 375px;
+      height: 812px;
+      margin: 20px auto;
+      background: #000;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 12px #1a1a1a;
+      position: relative;
+    }
+    
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* AppBar */
+    .appbar {
+      background: #000;
+      padding: 12px 16px;
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .appbar-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    
+    .appbar-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #e0e0e0;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 20px;
+      text-decoration: none;
+    }
+    
+    /* Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      background: #000;
+    }
+    
+    .content::-webkit-scrollbar { width: 0; }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: #000;
+      border-top: 0.5px solid rgba(255,255,255,0.08);
+      padding: 8px 0 12px;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      color: #808080;
+      cursor: pointer;
+      font-size: 10px;
+      padding: 4px 12px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    
+    .nav-item.active { color: #2196F3; }
+    .nav-item .emoji { font-size: 24px; }
+    
+    /* Messages */
+    .message-item {
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      padding: 12px 16px;
+      display: flex;
+      gap: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    .message-item:active { background: rgba(255,255,255,0.03); }
+    
+    .message-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .post-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #2196F3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    
+    .surf-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #80D8FF 0%, #2196F3 50%, #1976D2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(33,150,243,0.4);
+    }
+    
+    .message-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    
+    .message-user {
+      font-weight: 600;
+      font-size: 15px;
+      color: #fff;
+    }
+    
+    .ai-badge {
+      display: inline-block;
+      background: #2196F3;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 3px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    
+    .message-time {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .message-preview {
+      color: #999;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .nearby-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 10px;
+      gap: 2px;
+      color: #2196F3;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .nearby-btn span:first-child {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="screen">
+      <div class="appbar">
+        <div class="appbar-title">Connections</div>
+        <div class="appbar-actions">
+          <a href="nearby.html" class="nearby-btn">
+            <span>📍</span>
+            <span>Nearby</span>
+          </a>
+        </div>
+      </div>
+      <div class="content">
+        <a href="surf.html" class="message-item">
+          <div class="surf-avatar">💧</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Surf<span class="ai-badge">AI</span></span>
+              <span class="message-time">Just now</span>
+            </div>
+            <div class="message-preview">How about we check in next week to see...</div>
+          </div>
+        </a>
+        
+        <a href="chat.html" class="message-item">
+          <div class="post-avatar message-avatar">C</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Chidinma Okeke</span>
+              <span class="message-time">1h</span>
+            </div>
+            <div class="message-preview">Yes! Let's meet at the library at 3pm</div>
+          </div>
+        </a>
+        
+        <div class="message-item">
+          <div class="post-avatar message-avatar">O</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Oluwaseun Adebayo</span>
+              <span class="message-time">3h</span>
+            </div>
+            <div class="message-preview">Bring the plantain! 🍌</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <a href="feed.html" class="nav-item"><span class="emoji">📝</span>Posts</a>
+        <a href="connections.html" class="nav-item active"><span class="emoji">🏠</span>Connections</a>
+        <a href="channels.html" class="nav-item"><span class="emoji">👥</span>Channels</a>
+        <a href="profile.html" class="nav-item"><span class="emoji">👤</span>Profile</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

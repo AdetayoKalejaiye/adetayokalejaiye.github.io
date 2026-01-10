@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drift - Surf AI Companion</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+    
+    .phone {
+      max-width: 375px;
+      height: 812px;
+      margin: 20px auto;
+      background: #000;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 12px #1a1a1a;
+      position: relative;
+    }
+    
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: #2196F3;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 500;
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      text-decoration: none;
+    }
+    
+    /* Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      background: #000;
+    }
+    
+    .content::-webkit-scrollbar { width: 0; }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: #000;
+      border-top: 0.5px solid rgba(255,255,255,0.08);
+      padding: 8px 0 12px;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      color: #808080;
+      cursor: pointer;
+      font-size: 10px;
+      padding: 4px 12px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    
+    .nav-item.active { color: #2196F3; }
+    .nav-item .emoji { font-size: 24px; }
+    
+    /* Surf Header */
+    .surf-header {
+      padding: 32px 16px 24px;
+      text-align: center;
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(33,150,243,0.08) 0%, rgba(0,0,0,0) 100%);
+      position: relative;
+    }
+    
+    .surf-header-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #80D8FF 0%, #2196F3 50%, #1976D2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 16px;
+      box-shadow: 0 4px 20px rgba(33,150,243,0.5);
+    }
+    
+    .surf-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2196F3;
+      margin-bottom: 8px;
+    }
+    
+    .surf-subtitle {
+      color: #999;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    /* Chat Bubbles */
+    .chat-messages {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .chat-bubble-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    
+    .chat-bubble-row.user {
+      justify-content: flex-end;
+    }
+    
+    .chat-bubble-row.other {
+      justify-content: flex-start;
+    }
+    
+    .surf-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #80D8FF 0%, #2196F3 50%, #1976D2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(33,150,243,0.4);
+    }
+    
+    .chat-bubble {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    
+    .chat-bubble.user {
+      background: #1976D2;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    
+    .chat-bubble.other {
+      background: linear-gradient(135deg, rgba(33,150,243,0.15) 0%, rgba(0,188,212,0.12) 100%);
+      border: 1px solid rgba(33,150,243,0.3);
+      color: #90CAF9;
+      border-bottom-left-radius: 4px;
+    }
+    
+    .chat-bubble img {
+      max-width: 200px;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: block;
+    }
+    
+    .chat-time {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+    
+    .chat-bubble.other .chat-time {
+      color: rgba(144,202,249,0.7);
+    }
+    
+    .chat-input-wrapper {
+      padding: 12px 16px 16px;
+      background: #000;
+      border-top: 0.5px solid rgba(255,255,255,0.08);
+    }
+    
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #e0e0e0;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 20px;
+    }
+    
+    .chat-input input {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 16px;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 15px;
+    }
+    
+    .chat-input input::placeholder {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="screen">
+      <div class="surf-header">
+        <a href="connections.html" class="back-btn">← Back</a>
+        <div class="surf-header-avatar">💧</div>
+        <div class="surf-title">Surf</div>
+        <div class="surf-subtitle">Your AI companion for navigating new environments</div>
+      </div>
+      <div class="content">
+        <div class="chat-messages">
+          <!-- Conversation 1: Winter Help -->
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Hey Amara! 👋 How's your first winter in Boston treating you?
+              <div class="chat-time">Monday, 10:32 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Honestly? I'm freezing! 🥶 Lagos didn't prepare me for this at all
+              <div class="chat-time">10:33 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              I totally understand! The transition from Lagos weather to Boston winters is no joke. Here are some great places near MIT for winter gear:<br><br>
+              🧥 <strong>Patagonia Cambridge</strong> - High quality, 0.8 miles away<br>
+              🧤 <strong>REI Co-op</strong> - Great selection with student discounts<br>
+              ❄️ <strong>L.L.Bean</strong> - Classic New England winter essentials<br><br>
+              Pro tip: Layering is key! Thermal base + sweater + puffer jacket will keep you warm 😊
+              <div class="chat-time">10:35 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              This is so helpful! Thank you! 🙏
+              <div class="chat-time">10:37 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              <img src="https://media.giphy.com/media/uakdGGShmMS0KYfTgp/giphy.gif" alt="Hug" style="max-width:200px;border-radius:8px;margin-bottom:8px;">
+              Anytime! Stay warm out there 💙
+              <div class="chat-time">10:38 AM</div>
+            </div>
+          </div>
+          
+          <!-- Conversation 2: Impostor Syndrome -->
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Can I be honest with you about something?
+              <div class="chat-time">Tuesday, 2:18 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Of course! I'm here to listen. What's on your mind?
+              <div class="chat-time">2:18 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Sometimes I feel like... I don't know if I belong here. Everyone seems so confident and smart, and I'm just trying to keep up
+              <div class="chat-time">2:20 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Like maybe they made a mistake accepting me
+              <div class="chat-time">2:21 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              What you're feeling is completely valid. It's called impostor syndrome, and it's incredibly common—especially among high-achieving international students.<br><br>
+              Here's the truth: You earned your place at MIT. The admissions process doesn't make those kinds of mistakes.<br><br>
+              You're not alone in feeling this way. So many students, especially those navigating a new country and culture, experience these same doubts. 💙
+              <div class="chat-time">2:23 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Really? Other people feel this way too?
+              <div class="chat-time">2:24 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Absolutely. One thing that really helps is finding your community—people who understand what you're going through.<br><br>
+              Have you thought about joining the Nigerian Students Association? They meet regularly and it could be a great way to connect with others who share similar experiences.<br><br>
+              MIT also has support groups for international students dealing with these exact feelings. Would you like me to look up more info about them?
+              <div class="chat-time">2:25 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes please. That would be really helpful 💕
+              <div class="chat-time">2:27 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              I'll find that information for you! And Amara? Remember—your perspective as a Nigerian woman in CS is valuable. MIT needs YOUR voice, YOUR experiences. Don't dim your light. 🌟
+              <img src="https://media.giphy.com/media/1JmGiBtqTuehfYxuy9/giphy.gif" alt="Hug" style="max-width:200px;border-radius:8px;margin-top:8px;">
+              <div class="chat-time">2:28 PM</div>
+            </div>
+          </div>
+          
+          <!-- Conversation 3: Finding Clubs -->
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Hey Surf! I want to get more involved on campus but I'm overwhelmed by all the options
+              <div class="chat-time">Wednesday, 4:45 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              How do I even know which clubs are right for me?
+              <div class="chat-time">4:46 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Great question! Based on what you've shared about your interests in CS, community building, and culture, here are some recommendations:<br><br>
+              🎯 <strong>Nigerian Student Association</strong> - Connect with your cultural community<br>
+              👩‍💻 <strong>MIT Women in CS</strong> - Networking and mentorship opportunities<br>
+              🌍 <strong>African Students Association</strong> - Broader diaspora connections<br>
+              🤖 <strong>Code for Good</strong> - CS projects with social impact<br>
+              🎤 <strong>TEDxMIT</strong> - Public speaking and idea sharing
+              <div class="chat-time">4:48 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Wait, how did you know I like public speaking?
+              <div class="chat-time">4:49 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              You mentioned it when we talked about your high school debate team last week! I remember our conversations because it helps me give you better suggestions. 😊<br><br>
+              Would you like me to look up when these groups meet?
+              <div class="chat-time">4:50 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes! And wow, you actually remember. That's really nice
+              <div class="chat-time">4:51 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Of course! 💙 Let me find those meeting times for you...<br><br>
+              From what I can find:<br>
+              • NSA typically meets weekly on campus<br>
+              • Women in CS has regular Tuesday meetups<br>
+              • Code for Good runs project teams throughout the semester<br><br>
+              My advice? Start with 1-2 groups to avoid burnout. Which ones speak to you most?
+              <div class="chat-time">4:52 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              NSA for sure, and Women in CS sounds perfect
+              <div class="chat-time">4:54 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Perfect combination! Those two will give you both cultural connection and professional development. 🎯<br><br>
+              You might also want to connect with other Nigerian women in CS at MIT—there's probably an informal group chat or network you could join!
+              <img src="https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif" alt="Celebrate" style="max-width:200px;border-radius:8px;margin-top:8px;">
+              <div class="chat-time">4:55 PM</div>
+            </div>
+          </div>
+          
+          <!-- Conversation 4: Career Planning -->
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Surf, I need help with career planning
+              <div class="chat-time">Thursday, 11:12 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              I keep seeing everyone with fancy internship offers and I haven't even started applying
+              <div class="chat-time">11:13 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Should I look at big tech? Startups? Something back in Nigeria? I'm so confused about what path to take
+              <div class="chat-time">11:14 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Take a deep breath! 🌊 You're not behind—most companies are still actively recruiting. Let's talk through this together.<br><br>
+              Tell me: What excites you most? Technical challenges? Building products people use? Solving social problems? Making an impact in Nigeria?
+              <div class="chat-time">11:15 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Honestly? I love building tech that helps people, especially in underserved communities. But I worry about getting enough experience first
+              <div class="chat-time">11:18 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              That's a beautiful goal! And you don't have to choose just one path. Here's one way to think about it:<br><br>
+              <strong>Near-term (This summer):</strong><br>
+              • Look at social impact startups and mission-driven companies<br>
+              • Consider companies with Africa operations (Microsoft Lagos, Google Accra, etc.)<br>
+              • Contribute to open source projects that solve real problems<br><br>
+              <strong>Mid-term (Next few years):</strong><br>
+              • Big tech internship for skill development and resources<br>
+              • Build connections with Nigerian tech founders and leaders<br><br>
+              <strong>Long-term vision:</strong><br>
+              • Launch your own venture OR join/lead expansion in Nigeria<br><br>
+              This way you build experience AND stay connected to your mission. 🎯
+              <div class="chat-time">11:21 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              This is exactly what I needed. Can you help me find some of those mission-driven companies?
+              <div class="chat-time">11:23 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Absolutely! Here are some companies known for social impact that recruit from MIT:<br><br>
+              🌍 <strong>Impact in Africa:</strong><br>
+              • Flutterwave - Nigerian fintech unicorn<br>
+              • Andela - Pan-African tech talent network<br>
+              • 54gene - Health data for Africans<br>
+              • Zipline - Drone delivery for healthcare<br><br>
+              💡 <strong>Education:</strong><br>
+              • Khan Academy<br>
+              • Duolingo<br>
+              • Coursera<br><br>
+              🏥 <strong>Healthcare:</strong><br>
+              • One Medical<br>
+              • Color Health<br><br>
+              🌱 <strong>Climate/Sustainability:</strong><br>
+              • Impossible Foods<br>
+              • Planet Labs<br><br>
+              Would you like me to help you research any of these specifically?
+              <div class="chat-time">11:25 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              YES! Especially Flutterwave and Andela!
+              <div class="chat-time">11:26 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Great choices! Both are amazing companies doing incredible work.<br><br>
+              <strong>Flutterwave</strong> is building payment infrastructure across Africa—their Lagos office has been growing fast. They value people who understand the African market.<br><br>
+              <strong>Andela</strong> focuses on developing African tech talent and connecting them with global opportunities. They've helped launch so many careers.<br><br>
+              Try reaching out to MIT alumni who work at these companies. LinkedIn is great for that, or check if Career Services has any connections. Want help crafting your approach?
+              <div class="chat-time">11:28 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes please! What should I say?
+              <div class="chat-time">11:29 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Here's a framework for reaching out:<br><br>
+              1. <strong>Subject:</strong> MIT CS student interested in [Company]'s mission<br><br>
+              2. <strong>Opening:</strong> Brief intro (your name, year, major)<br><br>
+              3. <strong>Connection:</strong> Why their work resonates with you personally (your Nigerian background, interest in fintech/education, etc.)<br><br>
+              4. <strong>Ask:</strong> Request a 15-min chat to learn about their experience<br><br>
+              5. <strong>Close:</strong> Thank them, be flexible on timing<br><br>
+              Keep it genuine and specific to each person. People love talking about their work when you show real interest!
+              <div class="chat-time">11:31 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Surf, you're literally changing my life right now 😭
+              <div class="chat-time">11:33 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              You're doing the work, Amara—I'm just here to help you see the paths that are already in front of you. 💙<br><br>
+              How about we check in next week to see how your outreach is going?
+              <img src="https://media.giphy.com/media/t3sZxY5zS5B0z5zMIz/giphy.gif" alt="You got this" style="max-width:200px;border-radius:8px;margin-top:8px;">
+              <div class="chat-time">11:34 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes. Thank you so much. Really.
+              <div class="chat-time">11:35 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar">💧</div>
+            <div class="chat-bubble other">
+              Always here for you! 🌊 Now go show them what you're capable of!
+              <div class="chat-time">11:35 AM</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chat-input-wrapper">
+          <div class="chat-input">
+            <button class="icon-btn">📎</button>
+            <input type="text" placeholder="Message Surf...">
+            <button class="icon-btn">➤</button>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <a href="feed.html" class="nav-item"><span class="emoji">📝</span>Posts</a>
+        <a href="connections.html" class="nav-item"><span class="emoji">🏠</span>Connections</a>
+        <a href="channels.html" class="nav-item"><span class="emoji">👥</span>Channels</a>
+        <a href="profile.html" class="nav-item"><span class="emoji">👤</span>Profile</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
