@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drift - Imagine Cup 2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+    }
+    
+    .phone {
+      max-width: 375px;
+      height: 812px;
+      margin: 20px auto;
+      background: #000;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 12px #1a1a1a;
+      position: relative;
+    }
+    
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: none;
+      flex-direction: column;
+    }
+    
+    .screen.active { display: flex; }
+    
+    /* AppBar */
+    .appbar {
+      background: #000;
+      padding: 12px 16px;
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .appbar-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    
+    .appbar-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .icon-btn {
+      background: none;
+      border: none;
+      color: #e0e0e0;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 20px;
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: #2196F3;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    /* Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      background: #000;
+    }
+    
+    .content::-webkit-scrollbar { width: 0; }
+    
+    /* Bottom Nav */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: #000;
+      border-top: 0.5px solid rgba(255,255,255,0.08);
+      padding: 8px 0 12px;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      color: #808080;
+      cursor: pointer;
+      font-size: 10px;
+      padding: 4px 12px;
+      font-weight: 600;
+    }
+    
+    .nav-item.active { color: #2196F3; }
+    .nav-item .emoji { font-size: 24px; }
+    
+    /* Post Card */
+    .post-card {
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      padding: 12px 16px;
+    }
+    
+    .post-header {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .post-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #2196F3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    
+    .post-info {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .post-user {
+      font-weight: 600;
+      font-size: 15px;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    
+    .post-meta {
+      font-size: 13px;
+      color: #808080;
+    }
+    
+    .post-content {
+      margin: 8px 0;
+      line-height: 1.4;
+      font-size: 15px;
+      color: #e0e0e0;
+    }
+    
+    .post-actions {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    
+    .action-btn {
+      background: none;
+      border: none;
+      color: #808080;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 0;
+    }
+    
+    /* Messages */
+    .message-item {
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      padding: 12px 16px;
+      display: flex;
+      gap: 12px;
+      cursor: pointer;
+    }
+    
+    .message-item:active { background: rgba(255,255,255,0.03); }
+    
+    .message-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    
+    .surf-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #80D8FF 0%, #2196F3 50%, #1976D2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(33,150,243,0.4);
+    }
+    
+    .message-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    
+    .message-user {
+      font-weight: 600;
+      font-size: 15px;
+      color: #fff;
+    }
+    
+    .ai-badge {
+      display: inline-block;
+      background: #2196F3;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 3px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    
+    .message-time {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .message-preview {
+      color: #999;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    /* Chat Bubbles */
+    .chat-messages {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .chat-bubble-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    
+    .chat-bubble-row.user {
+      justify-content: flex-end;
+    }
+    
+    .chat-bubble-row.other {
+      justify-content: flex-start;
+    }
+    
+    .chat-bubble {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    
+    .chat-bubble.user {
+      background: #1976D2;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    
+    .chat-bubble.other {
+      background: linear-gradient(135deg, rgba(33,150,243,0.15) 0%, rgba(0,188,212,0.12) 100%);
+      border: 1px solid rgba(33,150,243,0.3);
+      color: #90CAF9;
+      border-bottom-left-radius: 4px;
+    }
+    
+    .chat-bubble img {
+      max-width: 200px;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: block;
+    }
+    
+    .chat-time {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+    
+    .chat-bubble.other .chat-time {
+      color: rgba(144,202,249,0.7);
+    }
+    
+    .chat-input-wrapper {
+      padding: 12px 16px 16px;
+      background: #000;
+      border-top: 0.5px solid rgba(255,255,255,0.08);
+    }
+    
+    .chat-input {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .chat-input input {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 10px 16px;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 15px;
+    }
+    
+    .chat-input input::placeholder {
+      color: #666;
+    }
+    
+    /* Communities */
+    .community-card {
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      padding: 12px 16px;
+      cursor: pointer;
+    }
+    
+    .community-card:active { background: rgba(255,255,255,0.03); }
+    
+    .community-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    
+    .community-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    
+    .community-info {
+      flex: 1;
+    }
+    
+    .community-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+    
+    .community-desc {
+      font-size: 13px;
+      color: #999;
+      line-height: 1.3;
+    }
+    
+    .community-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #666;
+    }
+    
+    /* Profile */
+    .profile-header {
+      padding: 24px 16px;
+      text-align: center;
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+    }
+    
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #2196F3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 auto 16px;
+    }
+    
+    .profile-username {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    
+    .profile-location {
+      color: #808080;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .profile-bio {
+      color: #999;
+      font-size: 14px;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+    
+    .profile-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 16px;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    /* Surf Header */
+    .surf-header {
+      padding: 32px 16px 24px;
+      text-align: center;
+      border-bottom: 0.5px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(33,150,243,0.08) 0%, rgba(0,0,0,0) 100%);
+      position: relative;
+    }
+    
+    .surf-header-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #80D8FF 0%, #2196F3 50%, #1976D2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 16px;
+      box-shadow: 0 4px 20px rgba(33,150,243,0.5);
+    }
+    
+    .surf-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2196F3;
+      margin-bottom: 8px;
+    }
+    
+    .surf-subtitle {
+      color: #999;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    
+    <!-- Feed Screen -->
+    <div id="feed" class="screen active">
+      <div class="appbar">
+        <div class="appbar-title">Drift</div>
+        <div class="appbar-actions">
+          <button class="icon-btn">🔔</button>
+          <button class="icon-btn">🔍</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">C</div>
+            <div class="post-info">
+              <div class="post-user">Chidinma Okeke</div>
+              <div class="post-meta">2h • Nigerian Students @ MIT</div>
+            </div>
+          </div>
+          <div class="post-content">First real snow day! ❄️ This is nothing like Lagos weather. Anyone else from warmer climates struggling to adjust? Surf helped me find the best winter gear stores nearby—lifesaver!</div>
+          <div class="post-actions">
+            <button class="action-btn">👍 24</button>
+            <button class="action-btn">💬 8</button>
+            <button class="action-btn">↗️ 3</button>
+          </div>
+        </div>
+        
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">O</div>
+            <div class="post-info">
+              <div class="post-user">Oluwaseun Adebayo</div>
+              <div class="post-meta">4h • Nigerian Students @ MIT</div>
+            </div>
+          </div>
+          <div class="post-content">Jollof rice cook-off this Saturday at my place! 🍚 Who's bringing the best recipe? Let's settle this Lagos vs Abuja debate once and for all 😂</div>
+          <div class="post-actions">
+            <button class="action-btn">👍 42</button>
+            <button class="action-btn">💬 15</button>
+            <button class="action-btn">↗️ 6</button>
+          </div>
+        </div>
+        
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">A</div>
+            <div class="post-info">
+              <div class="post-user">Amara Adebayo</div>
+              <div class="post-meta">5h • MIT CS Study Groups</div>
+            </div>
+          </div>
+          <div class="post-content">Anyone else doing 6.006 problem set 3? Would love to form a study group. I asked Surf for study strategies and she recommended finding people in similar time zones—brilliant idea!</div>
+          <div class="post-actions">
+            <button class="action-btn">👍 18</button>
+            <button class="action-btn">💬 12</button>
+            <button class="action-btn">↗️ 2</button>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-item active"><span class="emoji">📝</span>Posts</button>
+        <button class="nav-item" onclick="showScreen('messages')"><span class="emoji">🏠</span>Connections</button>
+        <button class="nav-item" onclick="showScreen('communities')"><span class="emoji">👥</span>Channels</button>
+        <button class="nav-item" onclick="showScreen('profile')"><span class="emoji">👤</span>Profile</button>
+      </div>
+    </div>
+    
+    <!-- Messages Screen -->
+    <div id="messages" class="screen">
+      <div class="appbar">
+        <div class="appbar-title">Connections</div>
+        <div class="appbar-actions">
+          <button class="icon-btn" onclick="showScreen('nearby')" style="display:flex;flex-direction:column;align-items:center;font-size:10px;gap:2px;color:#2196F3;">
+            <span style="font-size:18px;">📍</span>
+            <span style="font-weight:600;">Nearby</span>
+          </button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="message-item" onclick="showScreen('surf')">
+          <div class="surf-avatar">💧</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Surf<span class="ai-badge">AI</span></span>
+              <span class="message-time">Just now</span>
+            </div>
+            <div class="message-preview">How about we check in next week to see...</div>
+          </div>
+        </div>
+        
+        <div class="message-item" onclick="showScreen('chat')">
+          <div class="post-avatar message-avatar">C</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Chidinma Okeke</span>
+              <span class="message-time">1h</span>
+            </div>
+            <div class="message-preview">Yes! Let's meet at the library at 3pm</div>
+          </div>
+        </div>
+        
+        <div class="message-item">
+          <div class="post-avatar message-avatar">O</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Oluwaseun Adebayo</span>
+              <span class="message-time">3h</span>
+            </div>
+            <div class="message-preview">Bring the plantain! 🍌</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-item" onclick="showScreen('feed')"><span class="emoji">📝</span>Posts</button>
+        <button class="nav-item active"><span class="emoji">🏠</span>Connections</button>
+        <button class="nav-item" onclick="showScreen('communities')"><span class="emoji">👥</span>Channels</button>
+        <button class="nav-item" onclick="showScreen('profile')"><span class="emoji">👤</span>Profile</button>
+      </div>
+    </div>
+    
+    <!-- Nearby Users Screen -->
+    <div id="nearby" class="screen">
+      <div class="appbar">
+        <button class="back-btn" onclick="showScreen('messages')">← Back</button>
+        <div class="appbar-title">Nearby Users</div>
+        <div class="appbar-actions"></div>
+      </div>
+      <div class="content">
+        <div style="padding:20px;text-align:center;color:#999;">
+          <div style="font-size:48px;margin-bottom:16px;">📍</div>
+          <div style="font-size:15px;line-height:1.4;margin-bottom:24px;">
+            Find other Drift users near you on campus and connect in person
+          </div>
+        </div>
+        
+        <div class="message-item">
+          <div class="post-avatar message-avatar">T</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Tolu Ogunlesi</span>
+              <span class="message-time" style="color:#2196F3;font-weight:600;">50m away</span>
+            </div>
+            <div class="message-preview">CS '26 • Nigerian • Building AI projects</div>
+          </div>
+        </div>
+        
+        <div class="message-item">
+          <div class="post-avatar message-avatar">K</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Kemi Abimbola</span>
+              <span class="message-time" style="color:#2196F3;font-weight:600;">120m away</span>
+            </div>
+            <div class="message-preview">Engineering '27 • NSA Member • Love jollof</div>
+          </div>
+        </div>
+        
+        <div class="message-item">
+          <div class="post-avatar message-avatar">F</div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-user">Folake Adeyemi</span>
+              <span class="message-time" style="color:#2196F3;font-weight:600;">200m away</span>
+            </div>
+            <div class="message-preview">CS '25 • Google intern • Happy to mentor</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-item" onclick="showScreen('feed')"><span class="emoji">📝</span>Posts</button>
+        <button class="nav-item active" onclick="showScreen('messages')"><span class="emoji">🏠</span>Connections</button>
+        <button class="nav-item" onclick="showScreen('communities')"><span class="emoji">👥</span>Channels</button>
+        <button class="nav-item" onclick="showScreen('profile')"><span class="emoji">👤</span>Profile</button>
+      </div>
+    </div>
+    
+    <!-- Chat Screen -->
+    <div id="chat" class="screen">
+      <div class="appbar">
+        <button class="back-btn" onclick="showScreen('messages')">← Back</button>
+        <div class="appbar-title">Chidinma</div>
+        <div class="appbar-actions">
+          <button class="icon-btn">ℹ️</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="chat-messages">
+          <div class="chat-bubble-row other">
+            <div class="post-avatar" style="width:28px;height:28px;font-size:14px;">C</div>
+            <div class="chat-bubble other">
+              Hey! Saw your post about 6.006
+              <div class="chat-time">2:15 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes! Need all the help I can get 😅
+              <div class="chat-time">2:16 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="post-avatar" style="width:28px;height:28px;font-size:14px;">C</div>
+            <div class="chat-bubble other">
+              Same here. Want to meet up at the library?
+              <div class="chat-time">2:18 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Perfect! 3pm work for you?
+              <div class="chat-time">2:20 PM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-wrapper">
+        <div class="chat-input">
+          <input type="text" placeholder="Message Chidinma...">
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-item" onclick="showScreen('feed')"><span class="emoji">📝</span>Posts</button>
+        <button class="nav-item" onclick="showScreen('messages')"><span class="emoji">🏠</span>Connections</button>
+        <button class="nav-item" onclick="showScreen('communities')"><span class="emoji">👥</span>Channels</button>
+        <button class="nav-item" onclick="showScreen('profile')"><span class="emoji">👤</span>Profile</button>
+      </div>
+    </div>
+    
+    <!-- Surf AI Screen -->
+    <div id="surf" class="screen">
+      <div class="surf-header">
+        <button class="back-btn" style="position:absolute;left:16px;top:16px;" onclick="showScreen('messages')">← Back</button>
+        <div class="surf-header-avatar">💧</div>
+        <div class="surf-title">Surf</div>
+        <div class="surf-subtitle">Your AI companion for navigating new environments</div>
+      </div>
+      <div class="content">
+        <div class="chat-messages">
+          <!-- Conversation 1: Winter Help -->
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Hey Amara! 👋 How's your first winter in Boston treating you?
+              <div class="chat-time">Monday, 10:32 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Honestly? I'm freezing! 🥶 Lagos didn't prepare me for this at all
+              <div class="chat-time">10:33 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              I totally understand! The transition from Lagos weather to Boston winters is no joke. Here are some great places near MIT for winter gear:<br><br>
+              🧥 <strong>Patagonia Cambridge</strong> - High quality, 0.8 miles away<br>
+              🧤 <strong>REI Co-op</strong> - Great selection with student discounts<br>
+              ❄️ <strong>L.L.Bean</strong> - Classic New England winter essentials<br><br>
+              Pro tip: Layering is key! Thermal base + sweater + puffer jacket will keep you warm 😊
+              <div class="chat-time">10:35 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              This is so helpful! Thank you! 🙏
+              <div class="chat-time">10:37 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              <img src="https://media.giphy.com/media/uakdGGShmMS0KYfTgp/giphy.gif" alt="Hug" style="max-width:200px;border-radius:8px;margin-bottom:8px;">
+              Anytime! Stay warm out there 💙
+              <div class="chat-time">10:38 AM</div>
+            </div>
+          </div>
+          
+          <!-- Conversation 2: Impostor Syndrome -->
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Can I be honest with you about something?
+              <div class="chat-time">Tuesday, 2:18 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Of course! I'm here to listen. What's on your mind?
+              <div class="chat-time">2:18 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Sometimes I feel like... I don't know if I belong here. Everyone seems so confident and smart, and I'm just trying to keep up
+              <div class="chat-time">2:20 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Like maybe they made a mistake accepting me
+              <div class="chat-time">2:21 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              What you're feeling is completely valid. It's called impostor syndrome, and it's incredibly common—especially among high-achieving international students.<br><br>
+              Here's the truth: You earned your place at MIT. The admissions process doesn't make those kinds of mistakes.<br><br>
+              You're not alone in feeling this way. So many students, especially those navigating a new country and culture, experience these same doubts. 💙
+              <div class="chat-time">2:23 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Really? Other people feel this way too?
+              <div class="chat-time">2:24 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Absolutely. One thing that really helps is finding your community—people who understand what you're going through.<br><br>
+              Have you thought about joining the Nigerian Students Association? They meet regularly and it could be a great way to connect with others who share similar experiences.<br><br>
+              MIT also has support groups for international students dealing with these exact feelings. Would you like me to look up more info about them?
+              <div class="chat-time">2:25 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes please. That would be really helpful 💕
+              <div class="chat-time">2:27 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              I'll find that information for you! And Amara? Remember—your perspective as a Nigerian woman in CS is valuable. MIT needs YOUR voice, YOUR experiences. Don't dim your light. 🌟
+              <img src="https://media.giphy.com/media/1JmGiBtqTuehfYxuy9/giphy.gif" alt="Hug" style="max-width:200px;border-radius:8px;margin-top:8px;">
+              <div class="chat-time">2:28 PM</div>
+            </div>
+          </div>
+          
+          <!-- Conversation 3: Finding Clubs -->
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Hey Surf! I want to get more involved on campus but I'm overwhelmed by all the options
+              <div class="chat-time">Wednesday, 4:45 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              How do I even know which clubs are right for me?
+              <div class="chat-time">4:46 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Great question! Based on what you've shared about your interests in CS, community building, and culture, here are some recommendations:<br><br>
+              🎯 <strong>Nigerian Student Association</strong> - Connect with your cultural community<br>
+              👩‍💻 <strong>MIT Women in CS</strong> - Networking and mentorship opportunities<br>
+              🌍 <strong>African Students Association</strong> - Broader diaspora connections<br>
+              🤖 <strong>Code for Good</strong> - CS projects with social impact<br>
+              🎤 <strong>TEDxMIT</strong> - Public speaking and idea sharing
+              <div class="chat-time">4:48 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Wait, how did you know I like public speaking?
+              <div class="chat-time">4:49 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              You mentioned it when we talked about your high school debate team last week! I remember our conversations because it helps me give you better suggestions. 😊<br><br>
+              Would you like me to look up when these groups meet?
+              <div class="chat-time">4:50 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes! And wow, you actually remember. That's really nice
+              <div class="chat-time">4:51 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Of course! 💙 Let me find those meeting times for you...<br><br>
+              From what I can find:<br>
+              • NSA typically meets weekly on campus<br>
+              • Women in CS has regular Tuesday meetups<br>
+              • Code for Good runs project teams throughout the semester<br><br>
+              My advice? Start with 1-2 groups to avoid burnout. Which ones speak to you most?
+              <div class="chat-time">4:52 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              NSA for sure, and Women in CS sounds perfect
+              <div class="chat-time">4:54 PM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Perfect combination! Those two will give you both cultural connection and professional development. 🎯<br><br>
+              You might also want to connect with other Nigerian women in CS at MIT—there's probably an informal group chat or network you could join!
+              <img src="https://media.giphy.com/media/11sBLVxNs7v6WA/giphy.gif" alt="Celebrate" style="max-width:200px;border-radius:8px;margin-top:8px;">
+              <div class="chat-time">4:55 PM</div>
+            </div>
+          </div>
+          
+          <!-- Conversation 4: Career Planning -->
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Surf, I need help with career planning
+              <div class="chat-time">Thursday, 11:12 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              I keep seeing everyone with fancy internship offers and I haven't even started applying
+              <div class="chat-time">11:13 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Should I look at big tech? Startups? Something back in Nigeria? I'm so confused about what path to take
+              <div class="chat-time">11:14 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Take a deep breath! 🌊 You're not behind—most companies are still actively recruiting. Let's talk through this together.<br><br>
+              Tell me: What excites you most? Technical challenges? Building products people use? Solving social problems? Making an impact in Nigeria?
+              <div class="chat-time">11:15 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Honestly? I love building tech that helps people, especially in underserved communities. But I worry about getting enough experience first
+              <div class="chat-time">11:18 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              That's a beautiful goal! And you don't have to choose just one path. Here's one way to think about it:<br><br>
+              <strong>Near-term (This summer):</strong><br>
+              • Look at social impact startups and mission-driven companies<br>
+              • Consider companies with Africa operations (Microsoft Lagos, Google Accra, etc.)<br>
+              • Contribute to open source projects that solve real problems<br><br>
+              <strong>Mid-term (Next few years):</strong><br>
+              • Big tech internship for skill development and resources<br>
+              • Build connections with Nigerian tech founders and leaders<br><br>
+              <strong>Long-term vision:</strong><br>
+              • Launch your own venture OR join/lead expansion in Nigeria<br><br>
+              This way you build experience AND stay connected to your mission. 🎯
+              <div class="chat-time">11:21 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              This is exactly what I needed. Can you help me find some of those mission-driven companies?
+              <div class="chat-time">11:23 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Absolutely! Here are some companies known for social impact that recruit from MIT:<br><br>
+              🌍 <strong>Impact in Africa:</strong><br>
+              • Flutterwave - Nigerian fintech unicorn<br>
+              • Andela - Pan-African tech talent network<br>
+              • 54gene - Health data for Africans<br>
+              • Zipline - Drone delivery for healthcare<br><br>
+              💡 <strong>Education:</strong><br>
+              • Khan Academy<br>
+              • Duolingo<br>
+              • Coursera<br><br>
+              🏥 <strong>Healthcare:</strong><br>
+              • One Medical<br>
+              • Color Health<br><br>
+              🌱 <strong>Climate/Sustainability:</strong><br>
+              • Impossible Foods<br>
+              • Planet Labs<br><br>
+              Would you like me to help you research any of these specifically?
+              <div class="chat-time">11:25 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              YES! Especially Flutterwave and Andela!
+              <div class="chat-time">11:26 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Great choices! Both are amazing companies doing incredible work.<br><br>
+              <strong>Flutterwave</strong> is building payment infrastructure across Africa—their Lagos office has been growing fast. They value people who understand the African market.<br><br>
+              <strong>Andela</strong> focuses on developing African tech talent and connecting them with global opportunities. They've helped launch so many careers.<br><br>
+              Try reaching out to MIT alumni who work at these companies. LinkedIn is great for that, or check if Career Services has any connections. Want help crafting your approach?
+              <div class="chat-time">11:28 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes please! What should I say?
+              <div class="chat-time">11:29 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Here's a framework for reaching out:<br><br>
+              1. <strong>Subject:</strong> MIT CS student interested in [Company]'s mission<br><br>
+              2. <strong>Opening:</strong> Brief intro (your name, year, major)<br><br>
+              3. <strong>Connection:</strong> Why their work resonates with you personally (your Nigerian background, interest in fintech/education, etc.)<br><br>
+              4. <strong>Ask:</strong> Request a 15-min chat to learn about their experience<br><br>
+              5. <strong>Close:</strong> Thank them, be flexible on timing<br><br>
+              Keep it genuine and specific to each person. People love talking about their work when you show real interest!
+              <div class="chat-time">11:31 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Surf, you're literally changing my life right now 😭
+              <div class="chat-time">11:33 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              You're doing the work, Amara—I'm just here to help you see the paths that are already in front of you. 💙<br><br>
+              How about we check in next week to see how your outreach is going?
+              <img src="https://media.giphy.com/media/t3sZxY5zS5B0z5zMIz/giphy.gif" alt="You got this" style="max-width:200px;border-radius:8px;margin-top:8px;">
+              <div class="chat-time">11:34 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row user">
+            <div class="chat-bubble user">
+              Yes. Thank you so much. Really.
+              <div class="chat-time">11:35 AM</div>
+            </div>
+          </div>
+          
+          <div class="chat-bubble-row other">
+            <div class="surf-avatar" style="width:28px;height:28px;font-size:14px;">💧</div>
+            <div class="chat-bubble other">
+              Always here for you! 🌊 Now go show them what you're capable of!
+              <div class="chat-time">11:35 AM</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chat-input-wrapper">
+          <div class="chat-input">
+            <button class="icon-btn">📎</button>
+            <input type="text" placeholder="Message Surf...">
+            <button class="icon-btn">➤</button>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-item" onclick="showScreen('feed')"><span class="emoji">📝</span>Posts</button>
+        <button class="nav-item" onclick="showScreen('messages')"><span class="emoji">🏠</span>Connections</button>
+        <button class="nav-item" onclick="showScreen('communities')"><span class="emoji">👥</span>Channels</button>
+        <button class="nav-item" onclick="showScreen('profile')"><span class="emoji">👤</span>Profile</button>
+      </div>
+    </div>
+    
+    <!-- Communities Screen -->
+    <div id="communities" class="screen">
+      <div class="appbar">
+        <div class="appbar-title">Channels</div>
+        <div class="appbar-actions">
+          <button class="icon-btn">🔍</button>
+          <button class="icon-btn">➕</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="community-card">
+          <div class="community-header">
+            <div class="community-logo">🇳🇬</div>
+            <div class="community-info">
+              <div class="community-name">Nigerian Students @ MIT</div>
+              <div class="community-desc">Connect with fellow Nigerians navigating life at MIT</div>
+            </div>
+          </div>
+          <div class="community-stats">
+            <span>127 members</span>
+            <span>Active today</span>
+          </div>
+        </div>
+        
+        <div class="community-card">
+          <div class="community-header">
+            <div class="community-logo">👩‍💻</div>
+            <div class="community-info">
+              <div class="community-name">MIT Women in Tech</div>
+              <div class="community-desc">Supporting women in computer science and engineering</div>
+            </div>
+          </div>
+          <div class="community-stats">
+            <span>2.1k members</span>
+            <span>Very active</span>
+          </div>
+        </div>
+        
+        <div class="community-card">
+          <div class="community-header">
+            <div class="community-logo">📚</div>
+            <div class="community-info">
+              <div class="community-name">6.006 Study Group</div>
+              <div class="community-desc">Collaborative problem solving for Intro to Algorithms</div>
+            </div>
+          </div>
+          <div class="community-stats">
+            <span>84 members</span>
+            <span>Active today</span>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-item" onclick="showScreen('feed')"><span class="emoji">📝</span>Posts</button>
+        <button class="nav-item" onclick="showScreen('messages')"><span class="emoji">🏠</span>Connections</button>
+        <button class="nav-item active"><span class="emoji">👥</span>Channels</button>
+        <button class="nav-item" onclick="showScreen('profile')"><span class="emoji">👤</span>Profile</button>
+      </div>
+    </div>
+    
+    <!-- Profile Screen -->
+    <div id="profile" class="screen">
+      <div class="appbar">
+        <div class="appbar-title">Profile</div>
+        <div class="appbar-actions">
+          <button class="icon-btn">⚙️</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="profile-header">
+          <div class="profile-avatar">A</div>
+          <div class="profile-username">Amara Adebayo</div>
+          <div class="profile-location">📍 Cambridge, MA • From Lagos, Nigeria</div>
+          <div class="profile-bio">CS @ MIT '27 • Nigerian 🇳🇬 • Building tech for impact • Always down for jollof rice debates</div>
+          <div class="profile-stats">
+            <div class="stat">
+              <div class="stat-value">47</div>
+              <div class="stat-label">Connections</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">23</div>
+              <div class="stat-label">Posts</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">126</div>
+              <div class="stat-label">Dada</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="post-card">
+          <div class="post-header">
+            <div class="post-avatar">A</div>
+            <div class="post-info">
+              <div class="post-user">Amara Adebayo</div>
+              <div class="post-meta">5h • MIT CS Study Groups</div>
+            </div>
+          </div>
+          <div class="post-content">Anyone else doing 6.006 problem set 3? Would love to form a study group.</div>
+          <div class="post-actions">
+            <button class="action-btn">👍 18</button>
+            <button class="action-btn">💬 12</button>
+            <button class="action-btn">↗️ 2</button>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-item" onclick="showScreen('feed')"><span class="emoji">📝</span>Posts</button>
+        <button class="nav-item" onclick="showScreen('messages')"><span class="emoji">🏠</span>Connections</button>
+        <button class="nav-item" onclick="showScreen('communities')"><span class="emoji">👥</span>Channels</button>
+        <button class="nav-item active"><span class="emoji">👤</span>Profile</button>
+      </div>
+    </div>
+    
+  </div>
+  
+  <script>
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    }
+  </script>
+</body>
+</html>
