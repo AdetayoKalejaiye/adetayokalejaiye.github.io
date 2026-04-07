@@ -1,0 +1,1 @@
+The index.html is now my portfolio website but this was the site I used to host the FGC Team Nigeria 2023 site. I've decided to keep the files and folders that were used for the FGC site for future purposes
